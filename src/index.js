@@ -8,7 +8,8 @@ import {
   onSnapshot,
   orderBy,
   query,
-  where
+  where,
+  serverTimestamp
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -50,14 +51,13 @@ const addFormElement = document.getElementById('add');
 addFormElement.addEventListener('submit', e => {
   e.preventDefault();
 
-  addFormElement.submit.innerHTML = "Please Wait...";
-
   addDoc(colRef, {
     name: addFormElement.name.value,
-    author: addFormElement.author.value
+    author: addFormElement.author.value,
+    createdAt: serverTimestamp()
   })
     .then(() => addFormElement.reset())
-  addFormElement.submit.innerHTML = "Save";
+
 
 })
 
@@ -89,7 +89,7 @@ function fillSelectElement(books) {
 
 // query 
 
-const q = query(colRef, where("author", "==", "Kia Boluki"), orderBy("name", "asc"));
+const q = query(colRef, orderBy("createdAt", "desc"));
 
 onSnapshot(q, snapshot => {
   let books = [];

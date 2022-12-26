@@ -153,3 +153,41 @@ const q = query(
 <img src="./documents/images/Screenshot 2022-12-26 185853.jpg">
 
 <img src="./documents/images/Screenshot 2022-12-26 190043.jpg">
+
+#### مرتب کردن بر اساس زمان ایجاد رکورد
+
+برای این کار میتونیم یه فیلد به داکیومنتمون اضافه کنیم تحت عنوان
+
+```js
+createdAt: Date();
+```
+
+اما خود فایربیس توابعی برای نگهداری زمان داره که بهتره از اونها استفاده کنیم. مثل
+
+```js
+import { serverTimestamp } from "firebase/firestore";
+```
+
+پس تابع اضافه کردن فیلد جدید رو به صورت زیر ویرایش میکنیم که همون زمان که داره رکورد جدید رو ثبت میکنه همون زمان هـــم تایم رو ذخیره کنه
+
+```js
+addDoc(colRef, {
+  name: addFormElement.name.value,
+  author: addFormElement.author.value,
+  createdAt: serverTimestamp(),
+}).then(() => addFormElement.reset());
+```
+
+حالا میتونیم اطلاعات دریافتی رو بر اساس زمان ثبت مرتب شده دریافت کنیم
+
+```js
+const q = query(
+  colRef,
+  where("author", "==", "Kia Boluki"),
+  orderBy("createdAt", "asc")
+);
+```
+
+### نکته
+
+وقتی تایم استمپ اضافه میکنیم به کد ، اسنپشات دو بار اجرا میشه یکبار دیتا برای فایربیس ارسال میشه و فایربیس اونها رو ذخیره میکنه همون زمان بخاطر وجود تایم استمپ زمان رو محاسبه میکنه و به فیلد اضافه میکنه بنابراین ایونت سنپشات دو بار اتفاق میافته
