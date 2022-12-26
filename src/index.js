@@ -5,7 +5,10 @@ import {
   getDocs,
   addDoc,
   deleteDoc,
-  onSnapshot
+  onSnapshot,
+  orderBy,
+  query,
+  where
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -83,3 +86,16 @@ function fillSelectElement(books) {
     selectElement.appendChild(optionElement);
   })
 }
+
+// query 
+
+const q = query(colRef, where("author", "==", "Kia Boluki"), orderBy("name", "asc"));
+
+onSnapshot(q, snapshot => {
+  let books = [];
+  snapshot.docs.forEach(doc => {
+    books.push({ ...doc.data(), id: doc.id });
+  })
+
+  console.log(books);
+})
